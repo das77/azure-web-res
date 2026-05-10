@@ -5,6 +5,7 @@ title: Azure Web App Resource Info
 
 # Azure Web App Resource Info
 
-This site is built with Jekyll and a theme defined in `docs/_config.yml`.
-
-The Azure deployment workflow updates this page with current resource metadata.
+- **Hostname:** [python-flask-res-era5gyfwdhcbg2fe.westus3-01.azurewebsites.net](https://python-flask-res-era5gyfwdhcbg2fe.westus3-01.azurewebsites.net)
+- **Operating System:** Linux
+- **Location:** West US 3
+- **State:** Running
