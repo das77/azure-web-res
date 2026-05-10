@@ -93,6 +93,12 @@ jobs:
           LOCATION=$(az resource show --ids "$RESOURCE_ID" --query location --output tsv)
           STATE=$(az resource show --ids "$RESOURCE_ID" --query properties.state --output tsv)
 
+          if [ "$KIND" = "app,linux" ]; then
+            OPERATING_SYSTEM="Linux"
+          else
+            OPERATING_SYSTEM="$KIND"
+          fi
+
           mkdir -p docs
           cat > docs/index.html <<EOF
           <!doctype html>
@@ -104,8 +110,8 @@ jobs:
             <body>
               <h1>Azure Web App Resource Info</h1>
               <dl>
-                <dt>Default Hostname</dt><dd>${HOSTNAME}</dd>
-                <dt>Kind</dt><dd>${KIND}</dd>
+                <dt>Hostname</dt><dd><a href="https://${HOSTNAME}">${HOSTNAME}</a></dd>
+                <dt>Operating System</dt><dd>${OPERATING_SYSTEM}</dd>
                 <dt>Location</dt><dd>${LOCATION}</dd>
                 <dt>State</dt><dd>${STATE}</dd>
               </dl>
