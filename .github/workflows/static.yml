@@ -38,12 +38,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2"
-      - name: Install Jekyll and theme
+      - name: Install Bundler and Jekyll dependencies
         run: |
-          gem install jekyll minima
+          gem install bundler
+          bundle install --gemfile docs/Gemfile
       - name: Build Jekyll site
         run: |
-          jekyll build --source docs --destination _site
+          bundle exec jekyll build --source docs --destination _site
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
