@@ -73,7 +73,19 @@ This repository includes a `Procfile` for Heroku:
 web: gunicorn app:app
 ```
 
-The app can be deployed to any platform that supports WSGI apps and environment variables.
+It also includes an Azure Web App deployment workflow in `.github/workflows/main_python-flask-res.yml`.
+
+The GitHub Actions workflow deploys the app to an Azure App Service named `Python-flask-res` and uses a service principal for authentication.
+
+Required repository secrets for Azure deployment:
+
+- `AZUREAPPSERVICE_CLIENTID_78740D20305C48B48009B216F02A194D`
+- `AZUREAPPSERVICE_TENANTID_2BD79001371D41A98BECF0B3257CDC6B`
+- `AZUREAPPSERVICE_SUBSCRIPTIONID_DA7DDF6B26784CF8A207A1BA75FFA845`
+
+Once those secrets are configured, pushing to `main` or manually running the workflow will deploy the app to Azure.
+
+The app can still be deployed to any platform that supports WSGI apps and environment variables.
 
 ## Project Structure
 
