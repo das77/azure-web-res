@@ -85,28 +85,40 @@ jobs:
           echo "HOSTNAME=$HOSTNAME" >> $GITHUB_ENV
           echo "Azure Web App default hostname: $HOSTNAME"
 
-      - name: Update GitHub Pages with hostname
+      - name: Update GitHub Pages with Azure resource metadata
         run: |
+          RESOURCE_ID="/subscriptions/e3cf5a98-49d0-4417-a558-c9cf9fba097f/resourceGroups/python-flask-res/providers/Microsoft.Web/sites/Python-flask-res"
+          HOSTNAME=$(az webapp show --name Python-flask-res --resource-group python-flask-res --query defaultHostName --output tsv)
+          KIND=$(az resource show --ids "$RESOURCE_ID" --query kind --output tsv)
+          LOCATION=$(az resource show --ids "$RESOURCE_ID" --query location --output tsv)
+          STATE=$(az resource show --ids "$RESOURCE_ID" --query properties.state --output tsv)
+
           mkdir -p docs
           cat > docs/index.html <<EOF
           <!doctype html>
           <html lang="en">
             <head>
               <meta charset="utf-8">
-              <title>Azure Web App Hostname</title>
+              <title>Azure Web App Resource Info</title>
             </head>
             <body>
-              <h1>Azure Web App default hostname</h1>
-              <p>${HOSTNAME}</p>
+              <h1>Azure Web App Resource Info</h1>
+              <dl>
+                <dt>Default Hostname</dt><dd>${HOSTNAME}</dd>
+                <dt>Kind</dt><dd>${KIND}</dd>
+                <dt>Location</dt><dd>${LOCATION}</dd>
+                <dt>State</dt><dd>${STATE}</dd>
+              </dl>
             </body>
           </html>
           EOF
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/index.html
           if git diff --cached --quiet; then
             echo "No GitHub Pages changes to commit."
           else
-            git commit -m "Update GitHub Pages hostname to ${HOSTNAME}"
+            git commit -m "Update GitHub Pages Azure resource info"
             git push
           fi
