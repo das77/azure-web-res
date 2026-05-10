@@ -1,5 +1,5 @@
 from flask import Flask, render_template, make_response
-from flask_talisman import Talisman
+# from flask_talisman import Talisman
 import boto3
 import os
 
@@ -7,10 +7,10 @@ app = Flask(__name__)
 
 # Wrap Flask app with Talisman.
 # Disable HTTPS enforcement in development because the Flask dev server runs over HTTP.
-if os.getenv('FLASK_ENV') == 'development':
-    Talisman(app, content_security_policy=None, force_https=False)
-else:
-    Talisman(app, content_security_policy=None)
+# if os.getenv('FLASK_ENV') == 'development':
+#     Talisman(app, content_security_policy=None, force_https=False)
+# else:
+#     Talisman(app, content_security_policy=None)
 
 @app.route('/')
 # create Index page
