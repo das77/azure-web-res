@@ -9,6 +9,13 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+  # Run after the Azure deploy workflow completes
+  workflow_run:
+    workflows:
+      - "Build and deploy Python app to Azure Web App - Python-flask-res"
+    types:
+      - completed
+
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
