@@ -1,6 +1,5 @@
 from flask import Flask, render_template, make_response
 # from flask_talisman import Talisman
-import boto3
 import os
 
 app = Flask(__name__)
@@ -26,6 +25,8 @@ def about():
 
 @app.route('/download/<path:file>')
 def download(file):
+    import boto3
+    
     bucket_name = os.getenv('S3_BUCKET_NAME')
     access_key = os.getenv('AWS_ACCESS_KEY_ID')
     secret_key = os.getenv('AWS_SECRET_ACCESS_KEY')
