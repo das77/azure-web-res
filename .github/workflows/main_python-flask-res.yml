@@ -87,7 +87,8 @@ jobs:
 
       - name: Update GitHub Pages with hostname
         run: |
-          cat > index.html <<'EOF'
+          mkdir -p docs
+          cat > docs/hostname.html <<'EOF'
           <!doctype html>
           <html lang="en">
             <head>
@@ -102,7 +103,7 @@ jobs:
           EOF
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add docs/hostname.html
           if git diff --cached --quiet; then
             echo "No GitHub Pages changes to commit."
           else
