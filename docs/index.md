@@ -1,8 +1,3 @@
----
-layout: default
-title: Azure Web App Resource Info
----
-
 # Azure Web App Resource Info
 
 - **Hostname:** [python-flask-res-era5gyfwdhcbg2fe.westus3-01.azurewebsites.net](https://python-flask-res-era5gyfwdhcbg2fe.westus3-01.azurewebsites.net)
