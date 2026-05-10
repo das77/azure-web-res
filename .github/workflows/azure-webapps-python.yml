@@ -21,12 +21,12 @@ name: Build and deploy Python app to Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: "python-flask-res" # set this to the name of your Azure Web App
-  PYTHON_VERSION: "3.14" # set this to the Python version to use
+  PYTHON_VERSION: "3.11" # set this to the Python version to use
   AZURE_WEBAPP_PACKAGE_PATH: "." # set this to the path of your web app project, relative to the repository root
 
 on:
   push:
-    branches: ["main"]
+    branches: ["flask-app"]
   workflow_dispatch:
 
 permissions:
@@ -87,10 +87,10 @@ jobs:
           name: python-app
           path: .
 
-      - name: Set up Python 3.14
+      - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
-          python-version: 3.14
+          python-version: 3.11
           cache: "pip"
       - name: Install dependencies
         run: |
