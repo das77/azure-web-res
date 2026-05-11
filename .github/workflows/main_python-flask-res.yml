@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
-          python-version: '3.14'
+          python-version: "3.14"
 
       # 🛠️ Local Build Section (Optional)
       # The following section in your workflow is designed to catch build issues early on the client side, before deployment. This can be helpful for debugging and validation. However, if this step significantly increases deployment time and early detection is not critical for your workflow, you may remove this section to streamline the deployment process.
@@ -31,8 +31,8 @@ jobs:
           python -m venv antenv
           source antenv/bin/activate
           pip install -r requirements.txt
-                
-      # By default, when you enable GitHub CI/CD integration through the Azure portal, the platform automatically sets the SCM_DO_BUILD_DURING_DEPLOYMENT application setting to true. This triggers the use of Oryx, a build engine that handles application compilation and dependency installation (e.g., pip install) directly on the platform during deployment. Hence, we exclude the antenv virtual environment directory from the deployment artifact to reduce the payload size. 
+
+      # By default, when you enable GitHub CI/CD integration through the Azure portal, the platform automatically sets the SCM_DO_BUILD_DURING_DEPLOYMENT application setting to true. This triggers the use of Oryx, a build engine that handles application compilation and dependency installation (e.g., pip install) directly on the platform during deployment. Hence, we exclude the antenv virtual environment directory from the deployment artifact to reduce the payload size.
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
@@ -45,7 +45,6 @@ jobs:
       # If you prefer to disable the Oryx build process during deployment, follow these steps:
       # 1. Remove the SCM_DO_BUILD_DURING_DEPLOYMENT app setting from your Azure App Service Environment variables.
       # 2. Refer to sample workflows for alternative deployment strategies: https://github.com/Azure/actions-workflow-samples/tree/master/AppService
-      
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,7 +58,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-app
-      
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -67,10 +66,40 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_943C5EA146424BECBF14B342840A3E44 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0C740C7BF75D44279DCD054FB5B1F3D5 }}
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
-        with:
-          app-name: 'Python-flask-res'
-          slot-name: 'Production'
-          
+      - name: Update GitHub Pages with Azure resource metadata
+        run: |
+          RESOURCE_ID="/subscriptions/e3cf5a98-49d0-4417-a558-c9cf9fba097f/resourceGroups/python-flask-res/providers/Microsoft.Web/sites/Python-flask-res"
+          HOSTNAME=$(az webapp show --name Python-flask-res --resource-group python-flask-res --query defaultHostName --output tsv)
+          KIND=$(az resource show --ids "$RESOURCE_ID" --query kind --output tsv)
+          LOCATION=$(az resource show --ids "$RESOURCE_ID" --query location --output tsv)
+          STATE=$(az resource show --ids "$RESOURCE_ID" --query properties.state --output tsv)
+
+          if [ "$KIND" = "app,linux" ]; then
+            OPERATING_SYSTEM="Linux"
+          else
+            OPERATING_SYSTEM="$KIND"
+          fi
+
+          mkdir -p docs
+          rm -f docs/index.md
+          cat > docs/index.md <<EOF
+          ---
+          layout: default
+          title: Azure Web App Resource Info
+          ---
+
+          - **Hostname:** [${HOSTNAME}](https://${HOSTNAME})
+          - **Operating System:** ${OPERATING_SYSTEM}
+          - **Location:** ${LOCATION}
+          - **State:** ${STATE}
+          EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.md
+          if git diff --cached --quiet; then
+            echo "No GitHub Pages changes to commit."
+          else
+            git commit -m "Update GitHub Pages Azure resource info"
+            git push
+          fi
